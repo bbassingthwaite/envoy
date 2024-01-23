@@ -256,7 +256,7 @@ private:
   bool doTrailer(ProcessorState& state, Http::HeaderMap& trailers);
   bool doTrailerGo(ProcessorState& state, Http::HeaderMap& trailers);
 
-  void initRequest(ProcessorState& state);
+  void initRequest(ProcessorState& state, uint32_t worker_id);
 
   uint64_t getMergedConfigId(ProcessorState& state);
 

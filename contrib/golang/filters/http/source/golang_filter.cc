@@ -222,7 +222,7 @@ void Filter::log(const Formatter::HttpFormatterContext& log_context,
 
     if (req_ == nullptr) {
       // log called by AccessLogDownstreamStart will happen before doHeaders
-      initRequest(state);
+      initRequest(state, this->worker_id_);
 
       request_headers_ = static_cast<Http::RequestOrResponseHeaderMap*>(
           const_cast<Http::RequestHeaderMap*>(&log_context.requestHeaders()));
@@ -247,7 +247,7 @@ GolangStatus Filter::doHeadersGo(ProcessorState& state, Http::RequestOrResponseH
             state.stateStr(), state.phaseStr(), end_stream);
 
   if (req_ == nullptr) {
-    initRequest(state);
+    initRequest(state, this->worker_id_);
   }
 
   req_->phase = static_cast<int>(state.phase());
@@ -1451,7 +1451,7 @@ CAPIStatus Filter::serializeStringValue(Filters::Common::Expr::CelValue value,
   }
 }
 
-void Filter::initRequest(ProcessorState& state) {
+void Filter::initRequest(ProcessorState& state, uint32_t worker_id) {
   // req is used by go, so need to use raw memory and then it is safe to release at the gc
   // finalize phase of the go object.
   req_ = new httpRequestInternal(weak_from_this());
